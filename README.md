@@ -1,6 +1,6 @@
 # Constrained Type
 
-A library for constraining types. Has a similar interface to Belt.Id.
+A library for constraining types. This library's interface is similar to Belt.Id.
 
 ## Usage
 
