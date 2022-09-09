@@ -33,4 +33,12 @@ module type Module = {
   }
 }
 
+/**
+@return An inequality module that defines positive, nonPositive, negative, and nonNegative
+based on the Comparable and zero in parameters. In particular:
+A value is positive if and only if Comparable.cmp(value, zero) > 0
+A value is nonPositive if and only if  Comparable.cmp(value, zero) <= 0
+A value is negative if and only if  Comparable.cmp(value, zero) < 0
+A value is nonNegative if and only if  Comparable.cmp(value, zero) >= 0
+*/
 module Make: (Parameters: Parameters) => (Module with type underlying = Parameters.t)

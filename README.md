@@ -25,17 +25,18 @@ let a = Value.make(2, ~constraint_=module(EvenInteger))
 let b = Value.make(1, ~constraint_=module(EvenInteger)) 
 // Set c to 2
 let c = Value.makeExn(2, ~constraint_=module(EvenInteger))
-// Raise a ConstraintUnsatisfied exceptions
+// Raise a ConstraintUnsatisfied exception
 let d = Value.makeExn(1, ~constraint_=module(EvenInteger)) 
 // Set e to 2
 let e = Value.makeUnsafe(2, ~constraint_=module(EvenInteger)) 
-// Set f to 1 (unlike make and makeExn, makeUnsafe does not verify that it's constraint is satisfied)
+// Set f to 1. Unlike make and makeExn, makeUnsafe does not verify that it's constraint is satisfied
 let f = Value.makeUnsafe(1, ~constraint_=module(EvenInteger)) 
-// Set g to 1
+// Set g to 1. Value.All has no makeExn or makeUnsafe functions since Value.All.make always succeeds
 let g = Value.All.make(1)
-// Value.All has no makeExn or makeUnsafe functions since make always succeeds
 
-// Creating sets (Uses no additional space. Takes linear time) //
+// Creating sets //
+// Creating sets uses no additional space
+// make and makeExn take linear time. makeUnsafe takes constant time
 let unconstrainedSetOk = Belt.Set.fromArray([2, 4, 6, 8], ~id=module(MyComparableModule))
 let unconstrainedSetError = Belt.Set.fromArray([2, 4, 6, 8, 9], ~id=module(MyComparableModule))
 // Set constrainedSetOk to Ok({2, 4, 6, 8})
@@ -48,10 +49,12 @@ let constrainedSetOk2 = Set.makeExn(unconstrainedSetOk, ~constraint_=module(Even
 let constrainedSetError2 = Set.makeExn(unconstrainedSetError, ~constraint_=module(EvenInteger)) 
 // Set constrainedSetOk3 to {2, 4, 6, 8}
 let constrainedSetOk3 = Set.makeUnsafe(unconstrainedSetOk, ~constraint_=module(EvenInteger)) 
-// Set constrainedSetError3 to {2, 4, 6, 8, 9} (unlike make and makeExn, makeUnsafe does not verify that it's constraint is satisfied)
+// Set constrainedSetError3 to {2, 4, 6, 8, 9}. Unlike make and makeExn, makeUnsafe does not verify that it's constraint is satisfied)
 let constrainedSetError3 = Set.makeUnsafe(unconstrainedSetError, ~constraint_=module(EvenInteger)) 
 
-// Creating maps (Uses no additional space. Takes linear time)
+// Creating maps  //
+// Creating sets uses no additional space
+// make and makeExn take linear time. makeUnsafe takes constant time
 let unconstrainedMapOk = Belt.Map.fromArray([(2, 1), (4, 3), (6, 5)], ~id=module(MyComparableModule))
 let unconstrainedMapError = Map.Set.fromArray([(2, 2), (4, 3), (6, 5)],, ~id=module(MyComparableModule))
 // Set constrainedMapOk to Ok({(2, 1), (4, 3), (6, 5)})
@@ -93,3 +96,16 @@ let unconstrainedSet2 = Belt.Set.fromArray([1, 3, 5], ~id=module(MyComparableMod
 let set2 = Set.make(unconstrainedSet2, ~constraint_=module(AllInteger2))
 let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 ```
+
+## Macros
+
+*ConstrainedType.Inequality* builds inequality constraints and helper functions from a comparable. See ConstrainedType_Inequality.resi for documentation.
+
+## Built-In Constraints
+
+*ConstrainedType.Integer*. The module interface satisfies *ConstrainedType.Inequality.Module*.
+*ConstrainedType.Array*. Offers a generic NonEmpty constraint, and utilities to create ConstraintType.Value.t objects satisfying NonEmpty.
+
+## Constraints on Generic Types
+
+Because of how rescript handles generics, the syntax for creating constraints on generic types is verbose and unintuitive. See ConstrainedType_Array.res for an example.
