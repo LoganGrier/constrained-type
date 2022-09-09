@@ -25,6 +25,9 @@ module MakeU: (
 
 module All: {
   type identity
+  /**
+  A constraint which is always satisfied.
+  */
   type t<'element> = t<'element, identity>
 
   module Make: (
