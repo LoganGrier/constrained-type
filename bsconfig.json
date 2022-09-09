@@ -1,0 +1,28 @@
+{
+  "name": "@awebyte/constrained-type",
+  "namespace": false,
+  "sources": [
+      {
+          "dir": "src",
+          "subdirs": true
+      },
+      {
+          "dir": "__tests__",
+          "type": "dev",
+          "subdirs": true
+      }
+  ],
+  "package-specs": {
+      "module": "commonjs",
+      "in-source": false
+  },
+  "warnings": {
+      "error": true
+  },
+  "suffix": ".mjs",
+  "bs-dependencies": [],
+  "bs-dev-dependencies": [
+    "@awebyte/rescript-jest",
+    "rescript-fast-check"
+  ]
+}
