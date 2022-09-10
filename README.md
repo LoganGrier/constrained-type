@@ -76,7 +76,7 @@ let constrainedMapOk3 = Map.make(unconstrainedMapOk, ~keyConstraint=module(EvenI
 let constrainedMapError3 = Map.make(unconstrainedMapError, ~keyConstraint=module(EvenInteger), ~valueConstraint=module(EvenInteger)) 
 ```
 
-## Constrained set and saps are type-safe
+## Constrained set and maps are type-safe
 
 ```rescript
 let unconstrainedEvenSet = Belt.Set.fromArray([2, 4, 6, 8], ~id=module(MyComparableModule))
