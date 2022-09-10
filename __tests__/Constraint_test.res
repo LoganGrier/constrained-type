@@ -28,16 +28,22 @@ module Tests = (
 ) => {
   describe(Parameters.name, () => {
     describe("isSatisfied", () => {
-      test("isSatisfied function matches isSatisfied parameter", () => {
-        assert_(
-          property1(integer(), int => {
-            let actual = module(Parameters.Constraint)->Constraint.isSatisfied(int)
-            let expected = Parameters.isSatisfied(int)
-            expect(actual)->toBe(expected)->affirm
-          }),
-        )
-        pass
-      })
+      test(
+        "isSatisfied function matches isSatisfied parameter",
+        () => {
+          assert_(
+            property1(
+              integer(),
+              int => {
+                let actual = module(Parameters.Constraint)->Constraint.isSatisfied(int)
+                let expected = Parameters.isSatisfied(int)
+                expect(actual)->toBe(expected)->affirm
+              },
+            ),
+          )
+          pass
+        },
+      )
     })
   })
 }

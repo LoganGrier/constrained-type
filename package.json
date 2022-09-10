@@ -1,8 +1,10 @@
 {
   "name": "@awebyte/constrained-type",
+  "description": "A library for constraining types with an interface is similar to Belt.Id.",
   "packageManager": "yarn@3.1.0",
   "version": "1.0.0",
-  "private": true,
+  "author": "Awebyte",
+  "license": "MIT",
   "main": "bin/index",
   "sideEffects": false,
   "scripts": {
@@ -10,7 +12,24 @@
     "build": "rescript build -with-deps",
     "format": "rescript format -all",
     "test": "jest"
+  },  
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoganGrier/constrained-type.git"
   },
+  "keywords": [
+    "Rescript",
+    "constraint"
+  ],
+  "bugs": {
+    "url": "https://github.com/LoganGrier/constrained-type/issues"
+  },
+  "files": [
+    "LICENSE",
+    "src/",
+    "bsconfig.json",
+    "README.md"
+  ],
   "devDependencies": {
     "@awebyte/rescript-jest": "^0.9.2",
     "@babel/core": "^7.17.5",

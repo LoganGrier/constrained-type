@@ -1,6 +1,6 @@
 # Constrained Type
 
-A library for constraining types. This library's interface is similar to Belt.Id.
+A library for constraining types with an interface is similar to Belt.Id.
 
 ## Usage
 
@@ -109,3 +109,22 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 ## Constraints on Generic Types
 
 Because of how rescript handles generics, the syntax for creating constraints on generic types is verbose and unintuitive. See ConstrainedType_Array.res for an example.
+
+## Special use in JS interop
+
+ConstraintType.Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in Javascript bindings when you want to constraint the parameters of an external JS function.
+
+For example, suppose you have an external function "foo" that takes a single number parameter. You could interop with this function in Rescript as follows:
+
+```rescript
+module MyConstraint = Constraint.Make({
+  type t = int
+  let isSatisfied = ...
+})
+type fooResult = ...
+external foo: t<int, MyConstraint.identity> => fooResult = "foo"
+```
+
+## Undefined behavior when the underlying type is mutable
+
+If the 'value type of of a ConstraintType.Value.t<'value, 'id> object is mutable, then instances of ConstraintType.Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of ConstraintType.Value.t<'value, 'id> are created with make or makeExn.
