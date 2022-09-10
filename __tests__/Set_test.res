@@ -9,12 +9,15 @@ open ConstrainedType
 describe("make", () => {
   test("Returns Ok(_) when all entries satisfy constraint", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        switch underlying->Set.make(~constraint_=module(Integer.Positive)) {
-        | Ok(_) => pass->affirm
-        | Error(_) => fail("Unexpected error")->affirm
-        }
-      }),
+      property1(
+        set(positiveInt()),
+        underlying => {
+          switch underlying->Set.make(~constraint_=module(Integer.Positive)) {
+          | Ok(_) => pass->affirm
+          | Error(_) => fail("Unexpected error")->affirm
+          }
+        },
+      ),
     )
     pass
   })
@@ -37,28 +40,33 @@ describe("make", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        switch underlying->Set.make(~constraint_=module(Integer.Positive)) {
-        | Ok(result) => {
-            let underlyingSubsetsResult =
-              underlying
-              ->Belt.Set.keepU((. element) =>
-                !(
-                  result->Belt.Set.has(
-                    element->Value.makeExn(~constraint_=module(Integer.Positive)),
-                  )
+      property1(
+        set(positiveInt()),
+        underlying => {
+          switch underlying->Set.make(~constraint_=module(Integer.Positive)) {
+          | Ok(result) => {
+              let underlyingSubsetsResult =
+                underlying
+                ->Belt.Set.keepU(
+                  (. element) =>
+                    !(
+                      result->Belt.Set.has(
+                        element->Value.makeExn(~constraint_=module(Integer.Positive)),
+                      )
+                    ),
                 )
-              )
-              ->Belt.Set.size == 0
-            let resultSubsetsUnderlying =
-              result
-              ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
-              ->Belt.Set.size == 0
-            expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+                ->Belt.Set.size == 0
+              let resultSubsetsUnderlying =
+                result
+                ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
+                ->Belt.Set.size == 0
+              expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+            }
+
+          | Error(_) => fail("Unexpected error")->affirm
           }
-        | Error(_) => fail("Unexpected error")->affirm
-        }
-      }),
+        },
+      ),
     )
     pass
   })
@@ -66,12 +74,15 @@ describe("make", () => {
 describe("makeExn", () => {
   test("Returns a value when all entries satisfy constraint", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        expect(() => underlying->Set.makeExn(~constraint_=module(Integer.Positive)))
-        ->not_
-        ->toThrow
-        ->affirm
-      }),
+      property1(
+        set(positiveInt()),
+        underlying => {
+          expect(() => underlying->Set.makeExn(~constraint_=module(Integer.Positive)))
+          ->not_
+          ->toThrow
+          ->affirm
+        },
+      ),
     )
     pass
   })
@@ -93,20 +104,28 @@ describe("makeExn", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        let result = underlying->Set.makeExn(~constraint_=module(Integer.Positive))
-        let underlyingSubsetsResult =
-          underlying
-          ->Belt.Set.keepU((. element) =>
-            !(result->Belt.Set.has(element->Value.makeExn(~constraint_=module(Integer.Positive))))
-          )
-          ->Belt.Set.size == 0
-        let resultSubsetsUnderlying =
-          result
-          ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
-          ->Belt.Set.size == 0
-        expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-      }),
+      property1(
+        set(positiveInt()),
+        underlying => {
+          let result = underlying->Set.makeExn(~constraint_=module(Integer.Positive))
+          let underlyingSubsetsResult =
+            underlying
+            ->Belt.Set.keepU(
+              (. element) =>
+                !(
+                  result->Belt.Set.has(
+                    element->Value.makeExn(~constraint_=module(Integer.Positive)),
+                  )
+                ),
+            )
+            ->Belt.Set.size == 0
+          let resultSubsetsUnderlying =
+            result
+            ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
+            ->Belt.Set.size == 0
+          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+        },
+      ),
     )
     pass
   })
@@ -114,12 +133,15 @@ describe("makeExn", () => {
 describe("makeUnsafe", () => {
   test("Returns a value when all entries satisfy constraint", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        expect(() => underlying->Set.makeUnsafe(~constraint_=module(Integer.Positive)))
-        ->not_
-        ->toThrow
-        ->affirm
-      }),
+      property1(
+        set(positiveInt()),
+        underlying => {
+          expect(() => underlying->Set.makeUnsafe(~constraint_=module(Integer.Positive)))
+          ->not_
+          ->toThrow
+          ->affirm
+        },
+      ),
     )
     pass
   })
@@ -138,22 +160,28 @@ describe("makeUnsafe", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        let result = underlying->Set.makeUnsafe(~constraint_=module(Integer.Positive))
-        let underlyingSubsetsResult =
-          underlying
-          ->Belt.Set.keepU((. element) =>
-            !(
-              result->Belt.Set.has(element->Value.makeUnsafe(~constraint_=module(Integer.Positive)))
+      property1(
+        set(positiveInt()),
+        underlying => {
+          let result = underlying->Set.makeUnsafe(~constraint_=module(Integer.Positive))
+          let underlyingSubsetsResult =
+            underlying
+            ->Belt.Set.keepU(
+              (. element) =>
+                !(
+                  result->Belt.Set.has(
+                    element->Value.makeUnsafe(~constraint_=module(Integer.Positive)),
+                  )
+                ),
             )
-          )
-          ->Belt.Set.size == 0
-        let resultSubsetsUnderlying =
-          result
-          ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
-          ->Belt.Set.size == 0
-        expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-      }),
+            ->Belt.Set.size == 0
+          let resultSubsetsUnderlying =
+            result
+            ->Belt.Set.keepU((. element) => !(underlying->Belt.Set.has(element->Value.value)))
+            ->Belt.Set.size == 0
+          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+        },
+      ),
     )
     pass
   })
@@ -161,10 +189,13 @@ describe("makeUnsafe", () => {
 describe("value", () => {
   test("underlying->make->value eq underlying", () => {
     assert_(
-      property1(set(positiveInt()), underlying => {
-        let result = underlying->Set.makeExn(~constraint_=module(Integer.Positive))
-        expect(result->Set.value)->toEqual(underlying)->affirm
-      }),
+      property1(
+        set(positiveInt()),
+        underlying => {
+          let result = underlying->Set.makeExn(~constraint_=module(Integer.Positive))
+          expect(result->Set.value)->toEqual(underlying)->affirm
+        },
+      ),
     )
     pass
   })

@@ -9,15 +9,18 @@ open Arbitrary
 describe("make", () => {
   test("Returns Ok(_) when all entries satisfy constraint", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        switch underlying->Map.make(
-          ~keyConstraint=module(Integer.Positive),
-          ~valueConstraint=module(Integer.Negative),
-        ) {
-        | Ok(_) => pass->affirm
-        | Error(_) => fail("Unexpected error")->affirm
-        }
-      }),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          switch underlying->Map.make(
+            ~keyConstraint=module(Integer.Positive),
+            ~valueConstraint=module(Integer.Negative),
+          ) {
+          | Ok(_) => pass->affirm
+          | Error(_) => fail("Unexpected error")->affirm
+          }
+        },
+      ),
     )
     pass
   })
@@ -98,30 +101,39 @@ describe("make", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        switch underlying->Map.make(
-          ~keyConstraint=module(Integer.Positive),
-          ~valueConstraint=module(Integer.Negative),
-        ) {
-        | Ok(result) => {
-            let underlyingSubsetsResult =
-              underlying
-              ->Belt.Map.keepU((. key, value) => {
-                result->Belt.Map.get(key->Value.makeExn(~constraint_=module(Integer.Positive))) !=
-                  Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
-              })
-              ->Belt.Map.size == 0
-            let resultSubsetsUnderlying =
-              result
-              ->Belt.Map.keepU((. key, value) => {
-                underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
-              })
-              ->Belt.Map.size == 0
-            expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          switch underlying->Map.make(
+            ~keyConstraint=module(Integer.Positive),
+            ~valueConstraint=module(Integer.Negative),
+          ) {
+          | Ok(result) => {
+              let underlyingSubsetsResult =
+                underlying
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    result->Belt.Map.get(
+                      key->Value.makeExn(~constraint_=module(Integer.Positive)),
+                    ) != Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
+                  },
+                )
+                ->Belt.Map.size == 0
+              let resultSubsetsUnderlying =
+                result
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
+                  },
+                )
+                ->Belt.Map.size == 0
+              expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+            }
+
+          | Error(_) => fail("Unexpected error")->affirm
           }
-        | Error(_) => fail("Unexpected error")->affirm
-        }
-      }),
+        },
+      ),
     )
     pass
   })
@@ -129,17 +141,21 @@ describe("make", () => {
 describe("makeExn", () => {
   test("Does not throw when all entries satisfy constraint", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        expect(() =>
-          underlying->Map.makeExn(
-            ~keyConstraint=module(Integer.Positive),
-            ~valueConstraint=module(Integer.Negative),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          expect(
+            () =>
+              underlying->Map.makeExn(
+                ~keyConstraint=module(Integer.Positive),
+                ~valueConstraint=module(Integer.Negative),
+              ),
           )
-        )
-        ->not_
-        ->toThrow
-        ->affirm
-      }),
+          ->not_
+          ->toThrow
+          ->affirm
+        },
+      ),
     )
     pass
   })
@@ -211,27 +227,34 @@ describe("makeExn", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        let result =
-          underlying->Map.makeExn(
-            ~keyConstraint=module(Integer.Positive),
-            ~valueConstraint=module(Integer.Negative),
-          )
-        let underlyingSubsetsResult =
-          underlying
-          ->Belt.Map.keepU((. key, value) => {
-            result->Belt.Map.get(key->Value.makeExn(~constraint_=module(Integer.Positive))) !=
-              Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
-          })
-          ->Belt.Map.size == 0
-        let resultSubsetsUnderlying =
-          result
-          ->Belt.Map.keepU((. key, value) => {
-            underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
-          })
-          ->Belt.Map.size == 0
-        expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-      }),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          let result =
+            underlying->Map.makeExn(
+              ~keyConstraint=module(Integer.Positive),
+              ~valueConstraint=module(Integer.Negative),
+            )
+          let underlyingSubsetsResult =
+            underlying
+            ->Belt.Map.keepU(
+              (. key, value) => {
+                result->Belt.Map.get(key->Value.makeExn(~constraint_=module(Integer.Positive))) !=
+                  Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
+              },
+            )
+            ->Belt.Map.size == 0
+          let resultSubsetsUnderlying =
+            result
+            ->Belt.Map.keepU(
+              (. key, value) => {
+                underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
+              },
+            )
+            ->Belt.Map.size == 0
+          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+        },
+      ),
     )
     pass
   })
@@ -239,17 +262,21 @@ describe("makeExn", () => {
 describe("makeUnsafe", () => {
   test("Does not throw when all entries satisfy constraint", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        expect(() =>
-          underlying->Map.makeExn(
-            ~keyConstraint=module(Integer.Positive),
-            ~valueConstraint=module(Integer.Negative),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          expect(
+            () =>
+              underlying->Map.makeExn(
+                ~keyConstraint=module(Integer.Positive),
+                ~valueConstraint=module(Integer.Negative),
+              ),
           )
-        )
-        ->not_
-        ->toThrow
-        ->affirm
-      }),
+          ->not_
+          ->toThrow
+          ->affirm
+        },
+      ),
     )
     pass
   })
@@ -318,27 +345,35 @@ describe("makeUnsafe", () => {
   })
   test("Element in result iff element in argument", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        let result =
-          underlying->Map.makeUnsafe(
-            ~keyConstraint=module(Integer.Positive),
-            ~valueConstraint=module(Integer.Negative),
-          )
-        let underlyingSubsetsResult =
-          underlying
-          ->Belt.Map.keepU((. key, value) => {
-            result->Belt.Map.get(key->Value.makeUnsafe(~constraint_=module(Integer.Positive))) !=
-              Some(value->Value.makeUnsafe(~constraint_=module(Integer.Negative)))
-          })
-          ->Belt.Map.size == 0
-        let resultSubsetsUnderlying =
-          result
-          ->Belt.Map.keepU((. key, value) => {
-            underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
-          })
-          ->Belt.Map.size == 0
-        expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-      }),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          let result =
+            underlying->Map.makeUnsafe(
+              ~keyConstraint=module(Integer.Positive),
+              ~valueConstraint=module(Integer.Negative),
+            )
+          let underlyingSubsetsResult =
+            underlying
+            ->Belt.Map.keepU(
+              (. key, value) => {
+                result->Belt.Map.get(
+                  key->Value.makeUnsafe(~constraint_=module(Integer.Positive)),
+                ) != Some(value->Value.makeUnsafe(~constraint_=module(Integer.Negative)))
+              },
+            )
+            ->Belt.Map.size == 0
+          let resultSubsetsUnderlying =
+            result
+            ->Belt.Map.keepU(
+              (. key, value) => {
+                underlying->Belt.Map.get(key->Value.value) != Some(value->Value.value)
+              },
+            )
+            ->Belt.Map.size == 0
+          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+        },
+      ),
     )
     pass
   })
@@ -346,14 +381,17 @@ describe("makeUnsafe", () => {
 describe("value", () => {
   test("underlying->make->value eq underlying", () => {
     assert_(
-      property1(map(positiveInt(), negativeInt()), underlying => {
-        let result =
-          underlying->Map.makeExn(
-            ~keyConstraint=module(Integer.Positive),
-            ~valueConstraint=module(Integer.Negative),
-          )
-        expect(result->Map.value)->toEqual(underlying)->affirm
-      }),
+      property1(
+        map(positiveInt(), negativeInt()),
+        underlying => {
+          let result =
+            underlying->Map.makeExn(
+              ~keyConstraint=module(Integer.Positive),
+              ~valueConstraint=module(Integer.Negative),
+            )
+          expect(result->Map.value)->toEqual(underlying)->affirm
+        },
+      ),
     )
     pass
   })
@@ -361,361 +399,492 @@ describe("value", () => {
 
 describe("KeyOnly", () => {
   describe("make", () => {
-    test("Returns Ok(_) when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
-          | Ok(_) => pass->affirm
-          | Error(_) => fail("Unexpected error")->affirm
-          }
-        }),
-      )
-      pass
-    })
-    test("Returns Error(_) when some entries violate constraint", () => {
-      assert_(
-        property2(
-          map(positiveInt(), integer()),
-          map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
-            | Ok(_) => fail("Unexpected OK")->affirm
-            | Error(Map.InvalidEntries(violations)) =>
-              expect(violations->Belt.Map.eq(violatingElements, (v1, v2) => v1 == v2))
-              ->toBe(true)
+    test(
+      "Returns Ok(_) when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
+              | Ok(_) => pass->affirm
+              | Error(_) => fail("Unexpected error")->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Returns Error(_) when some entries violate constraint",
+      () => {
+        assert_(
+          property2(
+            map(positiveInt(), integer()),
+            map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
+              | Ok(_) => fail("Unexpected OK")->affirm
+              | Error(Map.InvalidEntries(violations)) =>
+                expect(violations->Belt.Map.eq(violatingElements, (v1, v2) => v1 == v2))
+                ->toBe(true)
+                ->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
+              | Ok(result) => {
+                  let underlyingSubsetsResult =
+                    underlying
+                    ->Belt.Map.keepU(
+                      (. key, value) => {
+                        result->Belt.Map.get(
+                          key->Value.makeExn(~constraint_=module(Integer.Positive)),
+                        ) != Some(value)
+                      },
+                    )
+                    ->Belt.Map.size == 0
+                  let resultSubsetsUnderlying =
+                    result
+                    ->Belt.Map.keepU(
+                      (. key, value) => {
+                        underlying->Belt.Map.get(key->Value.value) != Some(value)
+                      },
+                    )
+                    ->Belt.Map.size == 0
+                  expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+                }
+
+              | Error(_) => fail("Unexpected error")->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+  })
+  describe("makeExn", () => {
+    test(
+      "Does not throw when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              expect(() => underlying->Map.KeyOnly.makeExn(module(Integer.Positive)))
+              ->not_
+              ->toThrow
               ->affirm
-            }
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          switch underlying->Map.KeyOnly.make(module(Integer.Positive)) {
-          | Ok(result) => {
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Throws InvalidEntriesException when some entries violate key constraint",
+      () => {
+        assert_(
+          property2(
+            map(positiveInt(), integer()),
+            map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              switch underlying->Map.KeyOnly.makeExn(module(Integer.Positive)) {
+              | _ => fail("Unexpected OK")->affirm
+              | exception Map.InvalidEntriesException => pass->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              let result = underlying->Map.KeyOnly.makeExn(module(Integer.Positive))
               let underlyingSubsetsResult =
                 underlying
-                ->Belt.Map.keepU((. key, value) => {
-                  result->Belt.Map.get(key->Value.makeExn(~constraint_=module(Integer.Positive))) !=
-                    Some(value)
-                })
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    result->Belt.Map.get(
+                      key->Value.makeExn(~constraint_=module(Integer.Positive)),
+                    ) != Some(value)
+                  },
+                )
                 ->Belt.Map.size == 0
               let resultSubsetsUnderlying =
                 result
-                ->Belt.Map.keepU((. key, value) => {
-                  underlying->Belt.Map.get(key->Value.value) != Some(value)
-                })
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    underlying->Belt.Map.get(key->Value.value) != Some(value)
+                  },
+                )
                 ->Belt.Map.size == 0
               expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-            }
-          | Error(_) => fail("Unexpected error")->affirm
-          }
-        }),
-      )
-      pass
-    })
-  })
-  describe("makeExn", () => {
-    test("Does not throw when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          expect(() => underlying->Map.KeyOnly.makeExn(module(Integer.Positive)))
-          ->not_
-          ->toThrow
-          ->affirm
-        }),
-      )
-      pass
-    })
-    test("Throws InvalidEntriesException when some entries violate key constraint", () => {
-      assert_(
-        property2(
-          map(positiveInt(), integer()),
-          map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            switch underlying->Map.KeyOnly.makeExn(module(Integer.Positive)) {
-            | _ => fail("Unexpected OK")->affirm
-            | exception Map.InvalidEntriesException => pass->affirm
-            }
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          let result = underlying->Map.KeyOnly.makeExn(module(Integer.Positive))
-          let underlyingSubsetsResult =
-            underlying
-            ->Belt.Map.keepU((. key, value) => {
-              result->Belt.Map.get(key->Value.makeExn(~constraint_=module(Integer.Positive))) !=
-                Some(value)
-            })
-            ->Belt.Map.size == 0
-          let resultSubsetsUnderlying =
-            result
-            ->Belt.Map.keepU((. key, value) => {
-              underlying->Belt.Map.get(key->Value.value) != Some(value)
-            })
-            ->Belt.Map.size == 0
-          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-        }),
-      )
-      pass
-    })
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
   describe("makeUnsafe", () => {
-    test("Does not throw when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          expect(() => underlying->Map.KeyOnly.makeExn(module(Integer.Positive)))
-          ->not_
-          ->toThrow
-          ->affirm
-        }),
-      )
-      pass
-    })
-    test("Does not throw when some entries violate key constraint", () => {
-      assert_(
-        property2(
-          map(positiveInt(), integer()),
-          map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            underlying->Map.KeyOnly.makeUnsafe(module(Integer.Positive))->ignore
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          let result = underlying->Map.KeyOnly.makeUnsafe(module(Integer.Positive))
-          let underlyingSubsetsResult =
-            underlying
-            ->Belt.Map.keepU((. key, value) => {
-              result->Belt.Map.get(key->Value.makeUnsafe(~constraint_=module(Integer.Positive))) !=
-                Some(value)
-            })
-            ->Belt.Map.size == 0
-          let resultSubsetsUnderlying =
-            result
-            ->Belt.Map.keepU((. key, value) => {
-              underlying->Belt.Map.get(key->Value.value) != Some(value)
-            })
-            ->Belt.Map.size == 0
-          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-        }),
-      )
-      pass
-    })
+    test(
+      "Does not throw when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              expect(() => underlying->Map.KeyOnly.makeExn(module(Integer.Positive)))
+              ->not_
+              ->toThrow
+              ->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Does not throw when some entries violate key constraint",
+      () => {
+        assert_(
+          property2(
+            map(positiveInt(), integer()),
+            map(negativeInt(), integer())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              underlying->Map.KeyOnly.makeUnsafe(module(Integer.Positive))->ignore
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              let result = underlying->Map.KeyOnly.makeUnsafe(module(Integer.Positive))
+              let underlyingSubsetsResult =
+                underlying
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    result->Belt.Map.get(
+                      key->Value.makeUnsafe(~constraint_=module(Integer.Positive)),
+                    ) != Some(value)
+                  },
+                )
+                ->Belt.Map.size == 0
+              let resultSubsetsUnderlying =
+                result
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    underlying->Belt.Map.get(key->Value.value) != Some(value)
+                  },
+                )
+                ->Belt.Map.size == 0
+              expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
   describe("value", () => {
-    test("underlying->make->value eq underlying", () => {
-      assert_(
-        property1(map(positiveInt(), integer()), underlying => {
-          let result = underlying->Map.KeyOnly.makeExn(module(Integer.Positive))
-          expect(result->Map.KeyOnly.value)->toEqual(underlying)->affirm
-        }),
-      )
-      pass
-    })
+    test(
+      "underlying->make->value eq underlying",
+      () => {
+        assert_(
+          property1(
+            map(positiveInt(), integer()),
+            underlying => {
+              let result = underlying->Map.KeyOnly.makeExn(module(Integer.Positive))
+              expect(result->Map.KeyOnly.value)->toEqual(underlying)->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
 })
 
 describe("ValueOnly", () => {
   describe("make", () => {
-    test("Returns Ok(_) when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
-          | Ok(_) => pass->affirm
-          | Error(_) => fail("Unexpected error")->affirm
-          }
-        }),
-      )
-      pass
-    })
-    test("Returns Error(_) when some entries violate value constraint", () => {
-      assert_(
-        property2(
-          map(integer(), negativeInt()),
-          map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
-            | Ok(_) => fail("Unexpected OK")->affirm
-            | Error(Map.InvalidEntries(violations)) =>
-              expect(violations->Belt.Map.eq(violatingElements, (v1, v2) => v1 == v2))
-              ->toBe(true)
+    test(
+      "Returns Ok(_) when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
+              | Ok(_) => pass->affirm
+              | Error(_) => fail("Unexpected error")->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Returns Error(_) when some entries violate value constraint",
+      () => {
+        assert_(
+          property2(
+            map(integer(), negativeInt()),
+            map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
+              | Ok(_) => fail("Unexpected OK")->affirm
+              | Error(Map.InvalidEntries(violations)) =>
+                expect(violations->Belt.Map.eq(violatingElements, (v1, v2) => v1 == v2))
+                ->toBe(true)
+                ->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
+              | Ok(result) => {
+                  let underlyingSubsetsResult =
+                    underlying
+                    ->Belt.Map.keepU(
+                      (. key, value) => {
+                        result->Belt.Map.get(key) !=
+                          Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
+                      },
+                    )
+                    ->Belt.Map.size == 0
+                  let resultSubsetsUnderlying =
+                    result
+                    ->Belt.Map.keepU(
+                      (. key, value) => {
+                        underlying->Belt.Map.get(key) != Some(value->Value.value)
+                      },
+                    )
+                    ->Belt.Map.size == 0
+                  expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+                }
+
+              | Error(_) => fail("Unexpected error")->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+  })
+  describe("makeExn", () => {
+    test(
+      "Does not throw when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              expect(() => underlying->Map.ValueOnly.makeExn(module(Integer.Negative)))
+              ->not_
+              ->toThrow
               ->affirm
-            }
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          switch underlying->Map.ValueOnly.make(module(Integer.Negative)) {
-          | Ok(result) => {
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Throws InvalidEntriesException when some entries violate value constraint",
+      () => {
+        assert_(
+          property2(
+            map(integer(), negativeInt()),
+            map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              switch underlying->Map.ValueOnly.makeExn(module(Integer.Negative)) {
+              | _ => fail("Unexpected OK")->affirm
+              | exception Map.InvalidEntriesException => pass->affirm
+              }
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              let result = underlying->Map.ValueOnly.makeExn(module(Integer.Negative))
               let underlyingSubsetsResult =
                 underlying
-                ->Belt.Map.keepU((. key, value) => {
-                  result->Belt.Map.get(key) !=
-                    Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
-                })
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    result->Belt.Map.get(key) !=
+                      Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
+                  },
+                )
                 ->Belt.Map.size == 0
               let resultSubsetsUnderlying =
                 result
-                ->Belt.Map.keepU((. key, value) => {
-                  underlying->Belt.Map.get(key) != Some(value->Value.value)
-                })
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    underlying->Belt.Map.get(key) != Some(value->Value.value)
+                  },
+                )
                 ->Belt.Map.size == 0
               expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-            }
-          | Error(_) => fail("Unexpected error")->affirm
-          }
-        }),
-      )
-      pass
-    })
-  })
-  describe("makeExn", () => {
-    test("Does not throw when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          expect(() => underlying->Map.ValueOnly.makeExn(module(Integer.Negative)))
-          ->not_
-          ->toThrow
-          ->affirm
-        }),
-      )
-      pass
-    })
-    test("Throws InvalidEntriesException when some entries violate value constraint", () => {
-      assert_(
-        property2(
-          map(integer(), negativeInt()),
-          map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            switch underlying->Map.ValueOnly.makeExn(module(Integer.Negative)) {
-            | _ => fail("Unexpected OK")->affirm
-            | exception Map.InvalidEntriesException => pass->affirm
-            }
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          let result = underlying->Map.ValueOnly.makeExn(module(Integer.Negative))
-          let underlyingSubsetsResult =
-            underlying
-            ->Belt.Map.keepU((. key, value) => {
-              result->Belt.Map.get(key) !=
-                Some(value->Value.makeExn(~constraint_=module(Integer.Negative)))
-            })
-            ->Belt.Map.size == 0
-          let resultSubsetsUnderlying =
-            result
-            ->Belt.Map.keepU((. key, value) => {
-              underlying->Belt.Map.get(key) != Some(value->Value.value)
-            })
-            ->Belt.Map.size == 0
-          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-        }),
-      )
-      pass
-    })
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
   describe("makeUnsafe", () => {
-    test("Does not throw when all entries satisfy constraint", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          expect(() => underlying->Map.ValueOnly.makeExn(module(Integer.Negative)))
-          ->not_
-          ->toThrow
-          ->affirm
-        }),
-      )
-      pass
-    })
-    test("Does not throw when some entries violate value constraint", () => {
-      assert_(
-        property2(
-          map(integer(), negativeInt()),
-          map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
-          (satisfyingElements, violatingElements) => {
-            let underlying = Belt.Map.mergeMany(
-              satisfyingElements,
-              violatingElements->Belt.Map.toArray,
-            )
-            underlying->Map.ValueOnly.makeUnsafe(module(Integer.Negative))->ignore
-          },
-        ),
-      )
-      pass
-    })
-    test("Element in result iff element in argument", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          let result = underlying->Map.ValueOnly.makeUnsafe(module(Integer.Negative))
-          let underlyingSubsetsResult =
-            underlying
-            ->Belt.Map.keepU((. key, value) => {
-              result->Belt.Map.get(key) !=
-                Some(value->Value.makeUnsafe(~constraint_=module(Integer.Negative)))
-            })
-            ->Belt.Map.size == 0
-          let resultSubsetsUnderlying =
-            result
-            ->Belt.Map.keepU((. key, value) => {
-              underlying->Belt.Map.get(key) != Some(value->Value.value)
-            })
-            ->Belt.Map.size == 0
-          expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
-        }),
-      )
-      pass
-    })
+    test(
+      "Does not throw when all entries satisfy constraint",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              expect(() => underlying->Map.ValueOnly.makeExn(module(Integer.Negative)))
+              ->not_
+              ->toThrow
+              ->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Does not throw when some entries violate value constraint",
+      () => {
+        assert_(
+          property2(
+            map(integer(), negativeInt()),
+            map(integer(), positiveInt())->Arbitrary.Derive.filter(map => map->Belt.Map.size > 0),
+            (satisfyingElements, violatingElements) => {
+              let underlying = Belt.Map.mergeMany(
+                satisfyingElements,
+                violatingElements->Belt.Map.toArray,
+              )
+              underlying->Map.ValueOnly.makeUnsafe(module(Integer.Negative))->ignore
+            },
+          ),
+        )
+        pass
+      },
+    )
+    test(
+      "Element in result iff element in argument",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              let result = underlying->Map.ValueOnly.makeUnsafe(module(Integer.Negative))
+              let underlyingSubsetsResult =
+                underlying
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    result->Belt.Map.get(key) !=
+                      Some(value->Value.makeUnsafe(~constraint_=module(Integer.Negative)))
+                  },
+                )
+                ->Belt.Map.size == 0
+              let resultSubsetsUnderlying =
+                result
+                ->Belt.Map.keepU(
+                  (. key, value) => {
+                    underlying->Belt.Map.get(key) != Some(value->Value.value)
+                  },
+                )
+                ->Belt.Map.size == 0
+              expect(underlyingSubsetsResult && resultSubsetsUnderlying)->toBe(true)->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
   describe("value", () => {
-    test("underlying->make->value eq underlying", () => {
-      assert_(
-        property1(map(integer(), negativeInt()), underlying => {
-          let result = underlying->Map.ValueOnly.makeExn(module(Integer.Negative))
-          expect(result->Map.ValueOnly.value)->toEqual(underlying)->affirm
-        }),
-      )
-      pass
-    })
+    test(
+      "underlying->make->value eq underlying",
+      () => {
+        assert_(
+          property1(
+            map(integer(), negativeInt()),
+            underlying => {
+              let result = underlying->Map.ValueOnly.makeExn(module(Integer.Negative))
+              expect(result->Map.ValueOnly.value)->toEqual(underlying)->affirm
+            },
+          ),
+        )
+        pass
+      },
+    )
   })
 })
 
