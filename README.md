@@ -104,7 +104,7 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 
 ## Macros
 
-*ConstrainedType.Inequality* builds inequality constraints and helper functions from a comparable. See ConstrainedType_Inequality.resi for documentation.
+*ConstrainedType.Inequality* builds inequality constraints and helper functions from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
 
 ## Built-in constraints
 
