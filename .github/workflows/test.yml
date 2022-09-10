@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-ci:
+  test:
     # GitHub Actions seems to have a bug where jobs that use images other than ubuntu-latest
     # get stuck in the "queued" state
     runs-on: ubuntu-latest
