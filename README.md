@@ -111,13 +111,13 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 *ConstrainedType.Integer*. The module interface satisfies *ConstrainedType.Inequality.Module*.
 *ConstrainedType.Array*. Offers a generic NonEmpty constraint, and utilities to create ConstraintType.Value.t objects satisfying NonEmpty.
 
-## Constraints on generic Types
+## Constraints on generic types
 
 The syntax for creating constraints on generic types is verbose and unintuitive. See [ConstrainedType_Array.res](src/ConstrainedType_Array.res) for an example.
 
-## JS interop
+## JavaScript interop
 
-ConstraintType.Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in Javascript bindings when you want to constraint the parameters of an external JS function.
+ConstraintType.Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in JavaScript bindings when you want to constraint the parameters of an external JavaScript function.
 
 For example, suppose you have an external function "foo" that takes a single number parameter. You could interop with this function in Rescript as follows:
 
