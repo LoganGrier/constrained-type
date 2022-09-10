@@ -1,6 +1,11 @@
 # Constrained Type
 
-A library for constraining types with an interface is similar to Belt.Id.
+A library for constraining types with an interface is similar to [Belt.Id](https://rescript-lang.org/docs/manual/latest/api/belt/id).
+
+[![npm](https://img.shields.io/npm/v/@awebyte/constrained-type.svg)](https://npmjs.org/@awebyte/constrained-type)
+[![CI](https://github.com/LoganGrier/constrained-type/actions/workflows/test.yml/badge.svg)](https://github.com/LoganGrier/constrained-type/actions/workflows/test.yml)
+[![Issues](https://img.shields.io/github/issues/LoganGrier/constrained-type.svg)](https://github.com/LoganGrier/constrained-type/issues)
+[![Last Commit](https://img.shields.io/github/last-commit/LoganGrier/constrained-type.svg)](https://github.com/LoganGrier/constrained-type/commits/master)
 
 ## Usage
 
