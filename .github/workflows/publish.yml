@@ -3,7 +3,7 @@ on:
   release:
     types: [created]
 jobs:
-  build:
+  publish:
     # GitHub Actions seems to have a bug where jobs that use images other than ubuntu-latest
     # get stuck in the "queued" state
     runs-on: ubuntu-latest
@@ -28,6 +28,6 @@ jobs:
         run: yarn test
 
       - name: Publish
-        run: yarn publish
+        run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
