@@ -1,4 +1,4 @@
-# Constrained Type
+# Constrained type
 
 A library for constraining types with an interface is similar to [Belt.Id](https://rescript-lang.org/docs/manual/latest/api/belt/id).
 
@@ -76,7 +76,7 @@ let constrainedMapOk3 = Map.make(unconstrainedMapOk, ~keyConstraint=module(EvenI
 let constrainedMapError3 = Map.make(unconstrainedMapError, ~keyConstraint=module(EvenInteger), ~valueConstraint=module(EvenInteger)) 
 ```
 
-## Constrained Set and Maps are Type-Safe
+## Constrained set and saps are type-safe
 
 ```rescript
 let unconstrainedEvenSet = Belt.Set.fromArray([2, 4, 6, 8], ~id=module(MyComparableModule))
@@ -106,16 +106,16 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 
 *ConstrainedType.Inequality* builds inequality constraints and helper functions from a comparable. See ConstrainedType_Inequality.resi for documentation.
 
-## Built-In Constraints
+## Built-in constraints
 
 *ConstrainedType.Integer*. The module interface satisfies *ConstrainedType.Inequality.Module*.
 *ConstrainedType.Array*. Offers a generic NonEmpty constraint, and utilities to create ConstraintType.Value.t objects satisfying NonEmpty.
 
-## Constraints on Generic Types
+## Constraints on generic Types
 
-Because of how rescript handles generics, the syntax for creating constraints on generic types is verbose and unintuitive. See ConstrainedType_Array.res for an example.
+The syntax for creating constraints on generic types is verbose and unintuitive. See [ConstrainedType_Array.res](src/ConstrainedType_Array.res) for an example.
 
-## Special use in JS interop
+## JS interop
 
 ConstraintType.Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in Javascript bindings when you want to constraint the parameters of an external JS function.
 
@@ -130,6 +130,6 @@ type fooResult = ...
 external foo: t<int, MyConstraint.identity> => fooResult = "foo"
 ```
 
-## Undefined behavior when the underlying type is mutable
+## Mutable underlying types are unsafe
 
 If the 'value type of of a ConstraintType.Value.t<'value, 'id> object is mutable, then instances of ConstraintType.Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of ConstraintType.Value.t<'value, 'id> are created with make or makeExn.
