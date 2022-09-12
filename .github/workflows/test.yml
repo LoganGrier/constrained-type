@@ -37,6 +37,6 @@ jobs:
         run: yarn test
       
       - name: Test Formatting
-        run: 
-          - yarn format
-          - git diff-index --name-status --exit-code HEAD
+        run: |
+          yarn format
+          git diff-index --name-status --exit-code HEAD
