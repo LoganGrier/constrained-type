@@ -71,6 +71,54 @@ describe("value", () => {
   })
 })
 
+describe("assertConstraint", () => {
+  module Positive = Constraint.MakeU({
+    type t = ref<int>
+    let isSatisfied = (. value) => value.contents > 0
+  })
+  test("throws AssertionFailure if constraint is violated", () => {
+    let underlying = ref(1)
+    let value = Value.makeExn(underlying, ~constraint_=module(Positive))
+    underlying.contents = 0
+    let throwsAssertionFailure = switch Value.assertConstraint(
+      value,
+      ~constraint_=module(Positive),
+    ) {
+    | _ => false
+    | exception Value.AssertionFailure => true
+    }
+    expect(throwsAssertionFailure)->toBe(true)
+  })
+  exception ConstraintException
+  module PositiveThrows = Constraint.MakeU({
+    type t = ref<int>
+    let isSatisfied = (. value) =>
+      switch value.contents > 0 {
+      | true => true
+      | false => raise(ConstraintException)
+      }
+  })
+  test("throws constraint exception if constraint throws", () => {
+    let underlying = ref(1)
+    let value = Value.makeExn(underlying, ~constraint_=module(PositiveThrows))
+    underlying.contents = 0
+    let throwsConstraintException = switch Value.assertConstraint(
+      value,
+      ~constraint_=module(PositiveThrows),
+    ) {
+    | _ => false
+    | exception ConstraintException => true
+    }
+    expect(throwsConstraintException)->toBe(true)
+  })
+  test("Doesn't throw if constraint is satisfied", () => {
+    let underlying = ref(1)
+    let value = Value.makeExn(underlying, ~constraint_=module(Positive))
+    underlying.contents = 3
+    expect(() => Value.assertConstraint(value, ~constraint_=module(Positive)))->not_->toThrow
+  })
+})
+
 describe("all", () => {
   describe("make", () => {
     test(

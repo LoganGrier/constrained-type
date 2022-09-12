@@ -41,7 +41,6 @@ let make: (
 ) => option<t<'value, 'id>>
 
 exception ConstraintUnsatisfied
-
 /**
 @param value
 @param ~constraint_
@@ -64,6 +63,23 @@ let makeUnsafe: ('value, ~constraint_: ConstrainedType_Constraint.t<'value, 'id>
 @return The argument, as an unconstrained value
 */
 let value: t<'value, 'id> => 'value
+
+exception AssertionFailure
+/**
+Re-asserts that the constraint is still satisfied on the value. This is useful when the underlying type
+is mutable and you want to verify that you haven't accidentally mutated it in a way that violates. 
+the constraint. 
+
+It is pointless calling this function if the underlying type is immutable.
+
+@param value
+@throws AssertionFailure if ~constraint_(value) returns false
+@throws Any exception thrown by constraint_
+*/
+let assertConstraint: (
+  t<'value, 'id>,
+  ~constraint_: ConstrainedType_Constraint.t<'value, 'id>,
+) => unit
 
 module All: {
   /**
