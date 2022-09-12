@@ -37,6 +37,8 @@ jobs:
         run: yarn test
       
       - name: Test Formatting
+        # Since none of the previous commands change any committed files, we can determine if files have been formatted
+        # by formatting the files and seeing if any have changed.
         run: |
-          yarn format
+          yarn format          
           git diff --exit-code || echo "Run 'yarn format' and commit the changes."
