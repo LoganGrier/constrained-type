@@ -18,7 +18,9 @@ module EvenInteger = Constraint.MakeU({
   let isSatisfied = (. value) => mod(value, 2) == 0
 })
 
-// Creating a constraint that is always satisfied (useful when for creating Maps where only the key or only the value is constrained)
+// Creating a constraint that is always satisfied
+// This can be useful when creating Maps where only the key or only the value is constrained.
+// Consider using Map.KeyOnly or Map.ValueOnly instead.
 module AllInteger = Constraint.All.Make({
   type t = int
 })
@@ -76,7 +78,7 @@ let constrainedMapOk3 = Map.make(unconstrainedMapOk, ~keyConstraint=module(EvenI
 let constrainedMapError3 = Map.make(unconstrainedMapError, ~keyConstraint=module(EvenInteger), ~valueConstraint=module(EvenInteger)) 
 ```
 
-## Constrained set and maps are type-safe
+## Sets and maps with different constraints are incompatible
 
 ```rescript
 let unconstrainedEvenSet = Belt.Set.fromArray([2, 4, 6, 8], ~id=module(MyComparableModule))
@@ -86,7 +88,7 @@ let oddSet = Set.make(unconstrainedOddSet, ~constraint_=module(OddInteger))
 let union = evenSet->Belt.Set.union(oddSet) // Emits compile-time error
 ```
 
-### Multiple instances of Constraint.All are Compatible
+### Multiple instances of Constraint.All are compatible
 
 ```rescript
 module AllInteger1 = Constraint.All.Make({
@@ -104,12 +106,13 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 
 ## Macros
 
-*ConstrainedType.Inequality* builds inequality constraints and helper functions from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
+*Inequality* builds inequality constraints and helper functions from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
 
 ## Built-in constraints
 
-*ConstrainedType.Integer*. The module interface satisfies *ConstrainedType.Inequality.Module*.
-*ConstrainedType.Array*. Offers a generic NonEmpty constraint, and utilities to create ConstraintType.Value.t objects satisfying NonEmpty.
+*Integer*, which satisfies *Inequality.Module*.
+
+*Array*, which offers a generic NonEmpty constraint and utilities to create Value.t objects satisfying it.
 
 ## Constraints on generic types
 
@@ -117,7 +120,7 @@ The syntax for creating constraints on generic types is verbose and unintuitive.
 
 ## JavaScript interop
 
-ConstraintType.Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in JavaScript bindings when you want to constraint the parameters of an external JavaScript function.
+Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in JavaScript bindings when you want to constrain the parameters of an external JavaScript function.
 
 For example, suppose you have an external function "foo" that takes a single number parameter. You could interop with this function in Rescript as follows:
 
@@ -132,4 +135,6 @@ external foo: t<int, MyConstraint.identity> => fooResult = "foo"
 
 ## Mutable underlying types are unsafe
 
-If the 'value type of of a ConstraintType.Value.t<'value, 'id> object is mutable, then instances of ConstraintType.Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of ConstraintType.Value.t<'value, 'id> are created with make or makeExn.
+If the 'value type of of a Value.t<'value, 'id> object is mutable, then instances of Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of Value.t<'value, 'id> are created with make or makeExn. This is because creating a Value.t doesn't copy the input value. If the input value is mutated so that the constraint is no longer satisfied, the Value.t's invariant will be violated. As such, you should only use mutable underlying types when you can guarantee that instances of those types are never mutated after being used to create ConstrainedType values.
+
+We offer Value.assertConstraint to help clients catch mutation bugs.

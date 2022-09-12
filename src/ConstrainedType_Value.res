@@ -22,6 +22,14 @@ let makeUnsafe = (value: 'value, ~constraint_: Constraint.t<'value, 'id>) => {
 
 let value = value => value
 
+exception AssertionFailure
+let assertConstraint = (value, ~constraint_) => {
+  switch constraint_->Constraint.isSatisfied(value) {
+  | true => ()
+  | false => raise(AssertionFailure)
+  }
+}
+
 module All = {
   let make = value => value
 }
