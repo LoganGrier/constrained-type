@@ -39,4 +39,4 @@ jobs:
       - name: Test Formatting
         run: |
           yarn format
-          git diff-index --name-status --exit-code HEAD
+          git diff --exit-code || echo "Run 'yarn format' and commit the changes."
