@@ -33,5 +33,10 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Test
+      - name: Test Functionality
         run: yarn test
+      
+      - name: Test Formatting
+        run: 
+          - yarn format
+          - git diff-index --name-status --exit-code HEAD

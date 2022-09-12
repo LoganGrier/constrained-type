@@ -11,8 +11,7 @@
     "build": "rescript build -with-deps",
     "format": "rescript format -all",
     "prepack": "yarn build",
-    "test": "jest",
-    "test-formatting": "git diff-index --quiet HEAD"
+    "test": "jest"
   },  
   "repository": {
     "type": "git",
