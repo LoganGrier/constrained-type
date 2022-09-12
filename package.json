@@ -8,10 +8,11 @@
   "main": "bin/index",
   "sideEffects": false,
   "scripts": {
-    "prepack": "yarn build",
     "build": "rescript build -with-deps",
     "format": "rescript format -all",
-    "test": "jest"
+    "prepack": "yarn build",
+    "test": "jest",
+    "test-formatting": "git diff-index --quiet HEAD"
   },  
   "repository": {
     "type": "git",
