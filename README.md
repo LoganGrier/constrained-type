@@ -138,6 +138,10 @@ let constrainedMapOk3 = Map.make(unconstrainedMapOk, ~keyConstraint=module(EvenI
 let constrainedMapError3 = Map.make(unconstrainedMapError, ~keyConstraint=module(EvenInteger), ~valueConstraint=module(EvenInteger)) 
 ```
 
+### 2.3 NonEmpty
+
+Both `Set` and `Map` each have a `NonEmpty` constraint created using [`Generic`](#5-generic-constraints).
+
 ## 3 'All' Constraint
 
 The 'All' constraint is a constraint that is always satisfied.
@@ -185,7 +189,7 @@ The `Integer` module defines integer inequality constraints using `Inequality`.
 
 The `Generic` module allows users to create generic constraints.
 
-At present, only generics with one or two type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
+At present, only generics with one, two or three type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
 
 ### 5.1 Arrays
 

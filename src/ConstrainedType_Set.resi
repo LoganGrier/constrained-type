@@ -50,3 +50,6 @@ let makeUnsafe: (
 @return The argument, as an unconstrained set
 */
 let value: Belt.Set.t<ConstrainedType_Value.t<'value, 'cntId>, 'cmpId> => Belt.Set.t<'value, 'cmpId>
+
+module NonEmpty: ConstrainedType_Generic.TwoTypes.Module
+  with type underlying<'element, 'elementCmp> = Belt.Set.t<'element, 'elementCmp>

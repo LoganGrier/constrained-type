@@ -178,3 +178,6 @@ module ValueOnly: {
     'cmpId,
   >
 }
+
+module NonEmpty: ConstrainedType_Generic.ThreeTypes.Module
+  with type underlying<'key, 'value, 'keyCmp> = Belt.Map.t<'key, 'value, 'keyCmp>
