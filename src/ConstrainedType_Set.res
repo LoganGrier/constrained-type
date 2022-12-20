@@ -29,3 +29,8 @@ let makeUnsafe = (arg, ~constraint_: Constraint.t<'value, 'cntId>) => {
 // This is just the inverse of castSet
 external value: Belt.Set.t<Value.t<'value, 'cntId>, 'cmpId> => Belt.Set.t<'value, 'cmpId> =
   "%identity"
+
+module NonEmpty = ConstrainedType_Generic.TwoTypes.Make({
+  type t<'element, 'elementCmp> = Belt.Set.t<'element, 'elementCmp>
+  let isSatisfied = set => set->Belt.Set.size > 0
+})

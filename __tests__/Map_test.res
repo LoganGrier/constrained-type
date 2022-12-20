@@ -5,6 +5,7 @@ open Property.SyncUnit
 open Arbitraries
 open ConstrainedType
 open Arbitrary
+open Map
 
 describe("make", () => {
   test("Returns Ok(_) when all entries satisfy constraint", () => {
@@ -924,5 +925,35 @@ test("Two maps with different All constraints are compatible", () => {
       },
     ),
   )
+  pass
+})
+
+let cases = list{
+  (Belt.Map.make(~id=module(Integer.Comparable)), false),
+  ([(1, "a")]->Belt.Map.fromArray(~id=module(Integer.Comparable)), true),
+  ([(1, "a"), (2, "b"), (3, "c")]->Belt.Map.fromArray(~id=module(Integer.Comparable)), true),
+}
+
+testAll("NonEmpty.Value.make", cases, args => {
+  let (num, expected) = args
+  let isAllowed = switch NonEmpty.Value.make(num) {
+  | Some(_) => true
+  | None => false
+  }
+  expect(isAllowed)->toBe(expected)
+})
+
+testAll("NonEmpty.Value.makeExn", cases, args => {
+  let (num, expected) = args
+  let isAllowed = switch NonEmpty.Value.makeExn(num) {
+  | _ => true
+  | exception ConstrainedType.Value.ConstraintUnsatisfied => false
+  }
+  expect(isAllowed)->toBe(expected)
+})
+
+testAll("NonEmpty.Value.makeUnsafe", cases, args => {
+  let (num, _expected) = args
+  NonEmpty.Value.makeUnsafe(num)->ignore
   pass
 })

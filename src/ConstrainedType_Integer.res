@@ -1,5 +1,3 @@
-module Inequality = ConstrainedType_Inequality
-
 module Comparable = Belt.Id.MakeComparableU({
   type t = int
   let cmp = (. x: int, y: int) => {
@@ -15,7 +13,7 @@ module Comparable = Belt.Id.MakeComparableU({
   }
 })
 
-module Impl = Inequality.Make({
+module Impl = ConstrainedType_Inequality.Make({
   type t = int
   module Comparable = Comparable
   let zero = 0

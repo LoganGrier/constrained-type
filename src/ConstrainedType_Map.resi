@@ -6,11 +6,10 @@ exception InvalidEntriesException
 @param ~keyConstraint
 @param ~valueConstraint
 @return 
-Let G = { (k, v)∈M | keyConstraint(k) && valueConstraint(v) }
-Let B = M - G
-
-If G == M, Ok(M)
-Otherwise, Error(InvalidEntries(B))
+  Let G = { (k, v)∈M | keyConstraint(k) && valueConstraint(v) }
+  Let B = M - G
+  If G == M, Ok(M)
+  Otherwise, Error(InvalidEntries(B))
 @throws Any exception thrown by keyConstraint or valueConstraint
 */
 let make: (
@@ -30,11 +29,9 @@ let make: (
 @param ~keyConstraint
 @param ~valueConstraint
 @return 
-Let G = { (k, v)∈M | keyConstraint(k) && valueConstraint(v) }
-Let B = M - G
-
-If G == M, Ok(M)
-Otherwise, Error(InvalidEntries(B))
+  Let G = { (k, v)∈M | keyConstraint(k) && valueConstraint(v) }
+  Let B = M - G
+  If G == M, M
 @throws InvalidEntriesException if G != M (see @return)
 @throws Any exception thrown by keyConstraint or valueConstraint
 */
@@ -78,11 +75,10 @@ module KeyOnly: {
   @param M
   @param ~keyConstraint
   @return 
-  Let G = { (k, v)∈M | keyConstraint(k)}
-  Let B = M - G
-
-  If G == M, Ok(M)
-  Otherwise, Error(InvalidEntries(B))
+    Let G = { (k, v)∈M | keyConstraint(k)}
+    Let B = M - G
+    If G == M, Ok(M)
+    Otherwise, Error(InvalidEntries(B))
   @throws Any exception thrown by keyConstraint
   */
   let make: (
@@ -96,11 +92,9 @@ module KeyOnly: {
   @param M
   @param ~keyConstraint
   @return 
-  Let G = { (k, v)∈M | keyConstraint(k)}
-  Let B = M - G
-
-  If G == M, Ok(M)
-  Otherwise, Error(InvalidEntries(B))
+    Let G = { (k, v)∈M | keyConstraint(k)}
+    Let B = M - G
+    If G == M, M
   @throws InvalidEntriesException if G != M (see @return)
   @throws Any exception thrown by keyConstraint
   */
@@ -135,11 +129,10 @@ module ValueOnly: {
   @param M
   @param ~valueConstraint
   @return 
-  Let G = { (k, v)∈M | valueConstraint(k)}
-  Let B = M - G
-
-  If G == M, Ok(M)
-  Otherwise, Error(InvalidEntries(B))
+    Let G = { (k, v)∈M | valueConstraint(k)}
+    Let B = M - G
+    If G == M, Ok(M)
+    Otherwise, Error(InvalidEntries(B))
   @throws Any exception thrown by valueConstraint
   */
   let make: (
@@ -153,11 +146,9 @@ module ValueOnly: {
   @param M
   @param ~valueConstraint
   @return 
-  Let G = { (k, v)∈M | valueConstraint(k)}
-  Let B = M - G
-
-  If G == M, Ok(M)
-  Otherwise, Error(InvalidEntries(B))
+    Let G = { (k, v)∈M | valueConstraint(k)}
+    Let B = M - G
+    If G == M, M
   @throws InvalidEntriesException if G != M (see @return)
   @throws Any exception thrown by valueConstraint
   */
@@ -187,3 +178,6 @@ module ValueOnly: {
     'cmpId,
   >
 }
+
+module NonEmpty: ConstrainedType_Generic.ThreeTypes.Module
+  with type underlying<'key, 'value, 'keyCmp> = Belt.Map.t<'key, 'value, 'keyCmp>

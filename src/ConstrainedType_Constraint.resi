@@ -1,10 +1,15 @@
 type isSatisfied<'value, 'id>
 let makeIsSatisfiedInternal: (. (. 'value) => bool) => isSatisfied<'value, 'id>
+
 module type Type = {
   type identity
   type t
   let isSatisfied: isSatisfied<t, identity>
 }
+/**
+A runtime representation of a constraint function signed with a type parameter
+so that different constraint functions mismatch.
+*/
 type t<'value, 'id> = module(Type with type identity = 'id and type t = 'value)
 
 let isSatisfied: (t<'value, 'id>, 'value) => bool

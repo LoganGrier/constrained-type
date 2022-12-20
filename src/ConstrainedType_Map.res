@@ -124,3 +124,8 @@ module ValueOnly = {
     'cmpId,
   > = "%identity"
 }
+
+module NonEmpty = ConstrainedType_Generic.ThreeTypes.Make({
+  type t<'key, 'value, 'keyCmp> = Belt.Map.t<'key, 'value, 'keyCmp>
+  let isSatisfied = set => set->Belt.Map.size > 0
+})
