@@ -215,3 +215,10 @@ external foo: t<int, MyConstraint.identity> => fooResult = "foo"
 If the 'value type of of a Value.t<'value, 'id> object is mutable, then instances of Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of Value.t<'value, 'id> are created with make or makeExn. This is because creating a Value.t doesn't copy the input value. If the input value is mutated so that the constraint is no longer satisfied, the Value.t's invariant will be violated. As such, you should only use mutable underlying types when you can guarantee that instances of those types are never mutated after being used to create ConstrainedType values.
 
 We offer Value.assertConstraint to help clients catch mutation bugs.
+
+## 8 Breaking Changes
+
+* Version 2
+  * Changes to the interface of `Array.NonEmpty`
+    * `Array.NonEmpty.id` moved to `Array.NonEmpty.Constraint.identity`
+    * `Array.NonEmpty.t<'element>` moved to `Array.NonEmpty.Constraint.t<'element>`
