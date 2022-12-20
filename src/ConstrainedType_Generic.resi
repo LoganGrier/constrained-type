@@ -1,0 +1,33 @@
+module OneType: {
+  module type Parameters = {
+    type t<'a1>
+    let isSatisfied: t<'a1> => bool
+  }
+  module type Module = {
+    type underlying<'a1>
+    module Constraint: {
+      type identity
+      type t<'a1> = ConstrainedType_Constraint.t<underlying<'a1>, identity>
+    }
+    module Value: {
+      type t<'a1> = ConstrainedType_Value.t<underlying<'a1>, Constraint.identity>
+      /**
+      @param value
+      @return Some(value) if isSatisfied(value). None otherwise.
+      */
+      let make: underlying<'a1> => option<t<'a1>>
+      /**
+      @param value
+      @return value if isSatisfied(value)
+      @throws ConstrainedType_Value.ConstraintUnsatisfied if !isSatisfied(value)
+      */
+      let makeExn: underlying<'a1> => t<'a1>
+      /**
+      @param value
+      @return value
+      */
+      let makeUnsafe: underlying<'a1> => t<'a1>
+    }
+  }
+  module Make: (P: Parameters) => (Module with type underlying<'a1> = P.t<'a1>)
+}
