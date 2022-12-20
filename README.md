@@ -2,9 +2,11 @@
 
 A library for constraining types.
 
-Each constraint created with the library is signed with a type parameter so that different constraints have different types. Similar to Belt.Id.
+Each constraint created with the library is signed with a type parameter so that different constraints have different types.
 
-[Safe to use in Javascript bindings](#javascript-interop).
+This library has special functions for constraining the elements of existing [sets and maps](#2-sets-and-maps), creating [inequality constraints](#4-inequality-constraints) from `Belt.Id.Comparable`s, and [constraining generic types](#5-generic-constraints).
+
+It's also safe to use in [JavaScript bindings](#6-javascript-interop).
 
 [![npm](https://img.shields.io/npm/v/@awebyte/constrained-type.svg)](https://npmjs.org/@awebyte/constrained-type)
 [![CI](https://github.com/LoganGrier/constrained-type/actions/workflows/test.yml/badge.svg)](https://github.com/LoganGrier/constrained-type/actions/workflows/test.yml)
@@ -173,19 +175,23 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 
 ## 4 Inequality Constraints
 
-Builds inequality constraints and helper functions from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
+The `Inequality` module allows users to create inequality constraints from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
 
-## Built-in constraints
+### 4.1 Integers
 
-*Integer*, which satisfies *Inequality.Module*.
+The `Integer` module defines integer inequality constraints using `Inequality`.
 
-*Array*, which offers a generic NonEmpty constraint and utilities to create Value.t objects satisfying it.
+## 5 Generic Constraints
 
-## Constraints on generic types
+The `Generic` module allows users to create generic constraints.
 
-The syntax for creating constraints on generic types is verbose and unintuitive. See [ConstrainedType_Array.res](src/ConstrainedType_Array.res) for an example.
+At present, only generics with one or two type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
 
-## JavaScript interop
+### 5.1 Arrays
+
+The `Array` module defines an array `NonEmpty` constraint using `Generic`.
+
+## 6 JavaScript interop
 
 Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in JavaScript bindings when you want to constrain the parameters of an external JavaScript function.
 
@@ -200,7 +206,7 @@ type fooResult = ...
 external foo: t<int, MyConstraint.identity> => fooResult = "foo"
 ```
 
-## Mutable underlying types are unsafe
+## 7 Mutable underlying types are unsafe
 
 If the 'value type of of a Value.t<'value, 'id> object is mutable, then instances of Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of Value.t<'value, 'id> are created with make or makeExn. This is because creating a Value.t doesn't copy the input value. If the input value is mutated so that the constraint is no longer satisfied, the Value.t's invariant will be violated. As such, you should only use mutable underlying types when you can guarantee that instances of those types are never mutated after being used to create ConstrainedType values.
 
