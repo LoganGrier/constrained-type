@@ -59,12 +59,12 @@ module OneType = {
       let constraint_ = (type a1, _value: P.t<a1>): module(ConstrainedType_Constraint.Type with
         type identity = Constraint.identity
         and type t = P.t<a1>
-      ) => {
-        module Result = Constraint.Make({
-          type a1 = a1
-        })
-        module(Result)
-      }
+      ) =>
+        module(
+          Constraint.Make({
+            type a1 = a1
+          })
+        )
 
       let make = (type a1, value: P.t<a1>) =>
         ConstrainedType_Value.make(value, ~constraint_=constraint_(value))
@@ -147,11 +147,12 @@ module TwoTypes = {
         type identity = Constraint.identity
         and type t = P.t<a1, a2>
       ) => {
-        module Result = Constraint.Make({
-          type a1 = a1
-          type a2 = a2
-        })
-        module(Result)
+        module(
+          Constraint.Make({
+            type a1 = a1
+            type a2 = a2
+          })
+        )
       }
 
       let make = (type a1 a2, value: P.t<a1, a2>) =>
@@ -240,12 +241,13 @@ module ThreeTypes = {
         type identity = Constraint.identity
         and type t = P.t<a1, a2, a3>
       ) => {
-        module Result = Constraint.Make({
-          type a1 = a1
-          type a2 = a2
-          type a3 = a3
-        })
-        module(Result)
+        module(
+          Constraint.Make({
+            type a1 = a1
+            type a2 = a2
+            type a3 = a3
+          })
+        )
       }
 
       let make = (type a1 a2 a3, value: P.t<a1, a2, a3>) =>
