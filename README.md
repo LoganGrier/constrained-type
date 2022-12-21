@@ -19,13 +19,13 @@ It's also safe to use in [JavaScript bindings](#6-javascript-interop).
 
 ### 1.1 Constraints
 
-A `Constraint.t<'value, 'id>` is a function signed by `'id` that constrains `'value`.
+A [`Constraint.t<'value, 'id>`](src/ConstrainedType_Constraint.resi) is a function signed by `'id` that constrains `'value`.
 
 `Constraint.t`s are created by applying the built-in `module` function on a module satisfying `Constraint.Type`. Typically users create these modules with `Constraint.Make` and `Constraint.MakeU`.
 
 ### 1.2 Values
 
-A `Value.t<'value, 'id>` is a record/object of type 'value that satisfies `Constraint.t<'value, 'id>`.
+A [`Value.t<'value, 'id>`](src/ConstrainedType_Value.resi) is a record/object of type 'value that satisfies `Constraint.t<'value, 'id>`.
 
 There are three functions for creating values. These functions are differentiated by their behavior when their value argument doesn't satisfy their constraint:
 
@@ -70,7 +70,7 @@ let x: int = c->Value.value
 
 ## 2 Sets and Maps
 
-This library provides several utility functions for constraining `Belt.Set.t`s and `Belt.Map.t`s in the `Set` and `Map` modules.
+This library provides several utility functions for constraining `Belt.Set.t`s and `Belt.Map.t`s in the [`Set`](src/ConstrainedType_Set.resi) and [`Map`](src/ConstrainedType_Map.resi) modules.
 
 `Map` offers functions to constrain both the key and the value, just the key (inside `Map.KeyOnly`), and just the value (inside `Map.ValueOnly`).
 
@@ -179,23 +179,56 @@ let union = set1->Belt.Set.union(set2) // Set union to {1, 2, 3, 4, 5, 6, 8}
 
 ## 4 Inequality Constraints
 
-The `Inequality` module allows users to create inequality constraints from a comparable. See [ConstrainedType_Inequality.resi](src/ConstrainedType_Inequality.resi) for documentation.
+The [`Inequality`](src/ConstrainedType_Inequality.resi) module allows users to create inequality constraints from a comparable.
 
 ### 4.1 Integers
 
-The `Integer` module defines integer inequality constraints using `Inequality`.
+The [`Integer`](src/ConstrainedType_Integer.resi) module defines integer inequality constraints using `Inequality`.
+
+### 4.2 Example
+
+```rescript
+module Comparable = Belt.Id.MakeComparableU({
+  type t = int
+  let cmp = (. x: int, y: int) => {
+    // At first glance, it may seem that it would be better to return x-y, but this overflows
+    // when x and y are sufficiently far apart.
+    if x < y {
+      -1
+    } else if x > y {
+      1
+    } else {
+      0
+    }
+  }
+})
+
+module Integer = ConstrainedType_Inequality.Make({
+  type t = int
+  module Comparable = Comparable
+  let zero = 0
+})
+
+```
 
 ## 5 Generic Constraints
 
-The `Generic` module allows users to create generic constraints.
+The [`Generic`](src/ConstrainedType_Generic.resi)  module allows users to create generic constraints.
 
 At present, only generics with one, two and three type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
 
-See [ConstrainedType_Generic.resi](src/ConstrainedType_Generic.resi) for additional documentation.
-
 ### 5.1 Arrays
 
-The `Array` module defines an array `NonEmpty` constraint using `Generic`.
+The [`Array`](src/ConstrainedType_Array.resi) module defines an array `NonEmpty` constraint using `Generic`.
+
+### 5.2 Example
+
+```rescript
+module NonEmpty = ConstrainedType_Generic.OneType.Make({
+  type t<'element> = array<'element>
+  let isSatisfied = array => array->Belt.Array.size > 0
+})
+```
 
 ## 6 JavaScript interop
 
