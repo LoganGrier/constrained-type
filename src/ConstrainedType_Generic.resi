@@ -8,9 +8,12 @@ module OneType: {
     module Constraint: {
       type identity
       type t<'a1> = ConstrainedType_Constraint.t<underlying<'a1>, identity>
-      module Make: (P : {
-        type a1
-      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1> and type identity = identity
+      module Make: (
+        P: {
+          type a1
+        },
+      ) =>
+      (ConstrainedType_Constraint.Type with type t = underlying<P.a1> and type identity = identity)
     }
     module Value: {
       type t<'a1> = ConstrainedType_Value.t<underlying<'a1>, Constraint.identity>
@@ -45,10 +48,17 @@ module TwoTypes: {
     module Constraint: {
       type identity
       type t<'a1, 'a2> = ConstrainedType_Constraint.t<underlying<'a1, 'a2>, identity>
-      module Make: (P : {
-        type a1
-        type a2
-      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1, P.a2> and type identity = identity
+      module Make: (
+        P: {
+          type a1
+          type a2
+        },
+      ) =>
+      (
+        ConstrainedType_Constraint.Type
+          with type t = underlying<P.a1, P.a2>
+          and type identity = identity
+      )
     }
     module Value: {
       type t<'a1, 'a2> = ConstrainedType_Value.t<underlying<'a1, 'a2>, Constraint.identity>
@@ -83,11 +93,18 @@ module ThreeTypes: {
     module Constraint: {
       type identity
       type t<'a1, 'a2, 'a3> = ConstrainedType_Constraint.t<underlying<'a1, 'a2, 'a3>, identity>
-      module Make: (P : {
-        type a1
-        type a2
-        type a3
-      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1, P.a2, P.a3> and type identity = identity
+      module Make: (
+        P: {
+          type a1
+          type a2
+          type a3
+        },
+      ) =>
+      (
+        ConstrainedType_Constraint.Type
+          with type t = underlying<P.a1, P.a2, P.a3>
+          and type identity = identity
+      )
     }
     module Value: {
       type t<'a1, 'a2, 'a3> = ConstrainedType_Value.t<
