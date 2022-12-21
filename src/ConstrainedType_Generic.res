@@ -8,6 +8,9 @@ module OneType = {
     module Constraint: {
       type identity
       type t<'a1> = ConstrainedType_Constraint.t<underlying<'a1>, identity>
+      module Make: (P : {
+        type a1
+      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1> and type identity = identity
     }
     module Value: {
       type t<'a1> = ConstrainedType_Value.t<underlying<'a1>, Constraint.identity>
@@ -35,6 +38,13 @@ module OneType = {
     module Constraint = {
       type identity = unit
       type t<'a1> = ConstrainedType_Constraint.t<P.t<'a1>, identity>
+      module Make = (TypeParameters : {
+        type a1
+      }) => {
+        type identity = identity
+        type t = underlying<TypeParameters.a1>
+        let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(. (. val: t) => P.isSatisfied(val))
+      }
     }
     module Value = {
       type t<'a1> = ConstrainedType_Value.t<P.t<'a1>, Constraint.identity>
@@ -43,13 +53,9 @@ module OneType = {
         type identity = Constraint.identity
         and type t = P.t<a1>
       ) => {
-        module Result = {
-          type identity = Constraint.identity
-          type t = P.t<a1>
-          let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(.(. value) =>
-            P.isSatisfied(value)
-          )
-        }
+        module Result = Constraint.Make({
+          type a1 = a1
+        })
         module(Result)
       }
 
@@ -73,6 +79,10 @@ module TwoTypes = {
     module Constraint: {
       type identity
       type t<'a1, 'a2> = ConstrainedType_Constraint.t<underlying<'a1, 'a2>, identity>
+      module Make: (P : {
+        type a1
+        type a2
+      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1, P.a2> and type identity = identity
     }
     module Value: {
       type t<'a1, 'a2> = ConstrainedType_Value.t<underlying<'a1, 'a2>, Constraint.identity>
@@ -100,6 +110,14 @@ module TwoTypes = {
     module Constraint = {
       type identity = unit
       type t<'a1, 'a2> = ConstrainedType_Constraint.t<P.t<'a1, 'a2>, identity>
+      module Make = (TypeParameters : {
+        type a1
+        type a2
+      }) => {
+        type identity = identity
+        type t = underlying<TypeParameters.a1, TypeParameters.a2>
+        let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(. (. val: t) => P.isSatisfied(val))
+      }
     }
     module Value = {
       type t<'a1, 'a2> = ConstrainedType_Value.t<P.t<'a1, 'a2>, Constraint.identity>
@@ -111,13 +129,10 @@ module TwoTypes = {
         type identity = Constraint.identity
         and type t = P.t<a1, a2>
       ) => {
-        module Result = {
-          type identity = Constraint.identity
-          type t = P.t<a1, a2>
-          let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(.(. value) =>
-            P.isSatisfied(value)
-          )
-        }
+        module Result = Constraint.Make({
+          type a1 = a1
+          type a2 = a2
+        })
         module(Result)
       }
 
@@ -141,6 +156,11 @@ module ThreeTypes = {
     module Constraint: {
       type identity
       type t<'a1, 'a2, 'a3> = ConstrainedType_Constraint.t<underlying<'a1, 'a2, 'a3>, identity>
+      module Make: (P : {
+        type a1
+        type a2
+        type a3
+      }) => ConstrainedType_Constraint.Type with type t = underlying<P.a1, P.a2, P.a3> and type identity = identity
     }
     module Value: {
       type t<'a1, 'a2, 'a3> = ConstrainedType_Value.t<
@@ -171,6 +191,15 @@ module ThreeTypes = {
     module Constraint = {
       type identity = unit
       type t<'a1, 'a2, 'a3> = ConstrainedType_Constraint.t<P.t<'a1, 'a2, 'a3>, identity>
+      module Make = (TypeParameters : {
+        type a1
+        type a2
+        type a3
+      }) => {
+        type identity = identity
+        type t = underlying<TypeParameters.a1, TypeParameters.a2, TypeParameters.a3>
+        let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(. (. val: t) => P.isSatisfied(val))
+      }
     }
     module Value = {
       type t<'a1, 'a2, 'a3> = ConstrainedType_Value.t<P.t<'a1, 'a2, 'a3>, Constraint.identity>
@@ -182,13 +211,11 @@ module ThreeTypes = {
         type identity = Constraint.identity
         and type t = P.t<a1, a2, a3>
       ) => {
-        module Result = {
-          type identity = Constraint.identity
-          type t = P.t<a1, a2, a3>
-          let isSatisfied = ConstrainedType_Constraint.makeIsSatisfiedInternal(.(. value) =>
-            P.isSatisfied(value)
-          )
-        }
+        module Result = Constraint.Make({
+          type a1 = a1
+          type a2 = a2
+          type a3 = a3
+        })
         module(Result)
       }
 
