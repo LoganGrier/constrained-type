@@ -203,7 +203,7 @@ module Comparable = Belt.Id.MakeComparableU({
   }
 })
 
-module Integer = ConstrainedType_Inequality.Make({
+module Integer = Inequality.Make({
   type t = int
   module Comparable = Comparable
   let zero = 0
@@ -224,7 +224,7 @@ The [`Array`](src/ConstrainedType_Array.resi) module defines an array `NonEmpty`
 ### 5.2 Example
 
 ```rescript
-module NonEmpty = ConstrainedType_Generic.OneType.Make({
+module NonEmpty = Generic.OneType.Make({
   type t<'element> = array<'element>
   let isSatisfied = array => array->Belt.Array.size > 0
 })
