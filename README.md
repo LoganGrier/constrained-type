@@ -21,7 +21,7 @@ It's also safe to use in [JavaScript bindings](#6-javascript-interop).
 
 A `Constraint.t<'value, 'id>` is a function signed by `'id` that constrains `'value`.
 
-Any module satisfying `Constraint.Type` can be turned into a `Constraint.t` with the built-in `module` function. Typically users create these modules using `Constraint.Make` or `Constraint.MakeU`.
+`Constraint.t`s are created by applying the built-in `module` function on a module satisfying `Constraint.Type`. Typically users create these modules with `Constraint.Make` and `Constraint.MakeU`.
 
 ### 1.2 Values
 
@@ -29,11 +29,11 @@ A `Value.t<'value, 'id>` is a record/object of type 'value that satisfies `Const
 
 There are three functions for creating values. These functions are differentiated by their behavior when their value argument doesn't satisfy their constraint:
 
-* `make: ('value, ~constraint_: Constraint.t<'value, 'id>) => option<t<'value, 'id>>` returns `None` if `value` doesn't satisfy `~constraint_`
-* `makeExn: ('value, ~constraint_: Constraint.t<'value, 'id>) => t<'value, 'id>` raises a `ConstraintUnsatisfied` exception if `value` doesn't satisfy `~constraint_`
+* `make: ('value, ~constraint_: Constraint.t<'value, 'id>) => option<t<'value, 'id>>` returns `None`
+* `makeExn: ('value, ~constraint_: Constraint.t<'value, 'id>) => t<'value, 'id>` raises a `ConstraintUnsatisfied` exception
 * `makeUnsafe: ('value, ~constraint_: Constraint.t<'value, 'id>) => t<'value, 'id>` returns `value` **regardless of whether it satisfies `~constraint_`**.
 
-While makeUnsafe takes `~constraint_` as a parameter, it does not call the underlying constraint function. This gives it a potential performance advantage over the other two functions at the cost of not detecting non-conforming arguments. `makeUnsafe` is unsafe because it allows the creation of constrained values that don't actually satisfy their constraint. You should only call makeUnsafe if you are certain the constraint is satisfied. Even then, be wary of premature optimization.
+While makeUnsafe takes `~constraint_` as a parameter, it does not call the underlying constraint function. This gives it a potential performance advantage over the other two functions at the cost of not detecting constraint violations. This is unsafe because constraint satisfaction is a type invariant of `Value.t`. You should only call makeUnsafe if you are certain the constraint is satisfied. Even then, be wary of premature optimization.
 
 None of these functions copy their input. Thus, their result is reference-wise equal to their value parameter.
 
@@ -70,7 +70,7 @@ let x: int = c->Value.value
 
 ## 2 Sets and Maps
 
-This library provides several utility functions for constraining immutable Sets and Maps in the `Set` and `Map` modules.
+This library provides several utility functions for constraining `Belt.Set.t`s and `Belt.Map.t`s in the `Set` and `Map` modules.
 
 `Map` offers functions to constrain both the key and the value, just the key (inside `Map.KeyOnly`), and just the value (inside `Map.ValueOnly`).
 
@@ -79,12 +79,12 @@ Similar to `Value`, there are three functions in each of `Set`, `Map`, `Map.KeyO
 Like their corresponding functions in 'Value', these functions are differentiated by their behavior when their value argument doesn't satisfy their constraint:
 
 * `make` returns `Error([Module].InvalidEntries(Belt.[Module].t<...>))` where '[Module]' is either 'Set' or 'Map'.
-* `makeExn` raise `[Module].InvalidEntriesException` where '[Module]' is either 'Set' or 'Map'.
-* `makeUnsafe` raise `[Module].InvalidEntriesException` returns `value` **regardless of whether its elements satisfy the constraint(s)**.
+* `makeExn` raises `[Module].InvalidEntriesException` where '[Module]' is either 'Set' or 'Map'.
+* `makeUnsafe` returns `value` **regardless of whether its elements satisfy the constraint(s)**.
 
 Like their corresponding functions in `Value`, none of these functions copy their inputs.
 
-**Unlike** their corresponding functions in `Value`, these functions create collections of constrained values. For example, `Map.makeExn` has this signature:
+**Unlike** their corresponding functions in `Value`, these functions do not create constrained values. Instead, they create collections of constrained values. For example, `Map.makeExn` has this signature:
 
 ```rescript
 let makeExn: (
@@ -146,13 +146,13 @@ Both `Set` and `Map` each have a `NonEmpty` constraint created using [`Generic`]
 
 The 'All' constraint is a constraint that is always satisfied.
 
-This can be useful when creating Maps where only the key or only the value is constrained. Consider using Map.KeyOnly or Map.ValueOnly instead.
+This can be useful when creating Maps where only the key or only the value is constrained and it's not possible to use Map.KeyOnly or Map.ValueOnly.
 
-Since making a constrained value satisfying the `All` constraint always succeeds, `All` has no `makeExn` or `makeUnsafe` function, and `make` returns its input value instead of wrapping it in an option.
+Since making a constrained value satisfying the `All` constraint always succeeds, `All` has no `makeExn` or `makeUnsafe` function, and `make` returns its input instead of wrapping it in an option.
 
-Multiple instances of Constraint.All.t<'element> are compatible.
+All instances of Constraint.All.t share the same identity signature, and thus are compatible.
 
-### 3.1 Example
+### 3.1 Examples
 
 ```rescript
 module AllInteger = Constraint.All.Make({
@@ -189,7 +189,9 @@ The `Integer` module defines integer inequality constraints using `Inequality`.
 
 The `Generic` module allows users to create generic constraints.
 
-At present, only generics with one, two or three type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
+At present, only generics with one, two and three type parameters are supported, though it would be easy to add support for additional type parameters by copying and tweaking existing code. PRs are welcome.
+
+See [ConstrainedType_Generic.resi](src/ConstrainedType_Generic.resi) for additional documentation.
 
 ### 5.1 Arrays
 
@@ -197,7 +199,7 @@ The `Array` module defines an array `NonEmpty` constraint using `Generic`.
 
 ## 6 JavaScript interop
 
-Value.t<'value, 'id> is implemented as 'value. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of the contract of this module, and as such, it is safe to assume in your code. This is useful in JavaScript bindings when you want to constrain the parameters of an external JavaScript function.
+`Value.t<'value, 'id>` is implemented as `'value`. While this is an implementation detail as far as the Rescript compiler is concerned, it is part of this library's contract, and as such, is safe to assume in your code. This is useful in JavaScript bindings when you want to constrain the parameters or return value of an external JavaScript function.
 
 For example, suppose you have an external function "foo" that takes a single number parameter. You could interop with this function in Rescript as follows:
 
@@ -212,9 +214,9 @@ external foo: t<int, MyConstraint.identity> => fooResult = "foo"
 
 ## 7 Mutable underlying types are unsafe
 
-If the 'value type of of a Value.t<'value, 'id> object is mutable, then instances of Value.t<'value, 'id> may not actually satisfy the constraint specified by 'id. This could be true even if all instances of Value.t<'value, 'id> are created with make or makeExn. This is because creating a Value.t doesn't copy the input value. If the input value is mutated so that the constraint is no longer satisfied, the Value.t's invariant will be violated. As such, you should only use mutable underlying types when you can guarantee that instances of those types are never mutated after being used to create ConstrainedType values.
+If the `'value` type of of a `Value.t<'value, 'id>` object is mutable, then instances of `Value.t<'value, 'id>` may not actually satisfy the constraint specified by `'id`. This could be true even if all instances of `Value.t<'value, 'id>` are created with `make` or `makeExn`. This is because creating a `Value.t` doesn't copy the input value. If the input value is mutated so that the constraint is no longer satisfied, the `Value.t`'s invariant will be violated. As such, you should only use mutable underlying types when you can guarantee that instances of those types are never mutated after being used to create a `Value.t`.
 
-We offer Value.assertConstraint to help clients catch mutation bugs.
+You can use `Value.assertConstraint` to help catch mutation bugs.
 
 ## 8 Breaking Changes
 
