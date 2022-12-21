@@ -1,5 +1,6 @@
 module Array = ConstrainedType_Array
 module Constraint = ConstrainedType_Constraint
+module Generic = ConstrainedType_Generic
 module Inequality = ConstrainedType_Inequality
 module Integer = {
   module Comparable = ConstrainedType_Integer.Comparable
