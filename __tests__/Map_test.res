@@ -957,3 +957,21 @@ testAll("NonEmpty.Value.makeUnsafe", cases, args => {
   NonEmpty.Value.makeUnsafe(num)->ignore
   pass
 })
+
+describe("NonEmpty.Constraint.Make", () => {
+  testAll("Value.make with resulting module works as expected", cases, ((nums, expected)) => {
+    module NonEmptyConstraint = NonEmpty.Constraint.Make({
+      type a1 = int
+      type a2 = string
+      type a3 = Integer.Comparable.identity
+    })
+    let isAllowed = switch ConstrainedType.Value.make(
+      nums,
+      ~constraint_=module(NonEmptyConstraint),
+    ) {
+    | Some(_) => true
+    | None => false
+    }
+    expect(isAllowed)->toBe(expected)
+  })
+})

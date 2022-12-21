@@ -16,6 +16,13 @@ module.exports = {
             functions: 100,
             lines: 100,
             statements: 100
+        },        
+        // The rescript compiler generates some dead code that can't be tested. 
+        "lib/js/src/ConstrainedType_Generic.mjs": {
+            branches: 100,
+            functions: 70,
+            lines: 80,
+            statements: 80
         }
     },
     moduleFileExtensions: [
